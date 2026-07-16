@@ -1,0 +1,5 @@
+2026-07-16 10:00:01 GET /api/products 200 45ms
+2026-07-16 10:00:03 POST /api/auth/login 200 80ms
+2026-07-16 10:00:05 GET /api/products/99 404 20ms
+2026-07-16 10:00:08 POST /api/orders 500 130ms
+2026-07-16 10:00:10 GET /api/products 200 35ms
