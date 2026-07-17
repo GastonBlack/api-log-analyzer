@@ -3,3 +3,11 @@
 2026-07-16 10:00:05 GET /api/products/99 404 20ms
 2026-07-16 10:00:08 POST /api/orders 500 130ms
 2026-07-16 10:00:10 GET /api/products 200 35ms
+INVALID LOG LINE
+INVALID LOG LINE
+2026-07-16 10:00:14 GET /api/products 200 21ms
+2026-07-16 10:00:15 GET /api/products 200 38ms
+v
+2026-07-16 10:00:16 GET /api/products 200 240ms
+{asdasda}
+2026-07-16 10:02:04 GET /api/products 200 31ms
