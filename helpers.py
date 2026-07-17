@@ -16,6 +16,11 @@ def parse_log_line(line: str) -> dict:
         status_code = int(parts[4])
     except ValueError:
         raise ValueError("Invalid status code.")
+    
+    try:
+        duration_ms = int(parts[5].replace("ms", ""))
+    except ValueError:
+        raise ValueError("Invalid duration.")
 
     return {
         "date": parts[0],
@@ -23,7 +28,7 @@ def parse_log_line(line: str) -> dict:
         "method": parts[2],
         "endpoint": parts[3],
         "status_code": status_code,
-        "duration": parts[5],
+        "duration_ms": duration_ms,
     }
 
 

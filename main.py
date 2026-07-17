@@ -1,7 +1,7 @@
 from pathlib import Path
 from colorama import init
 
-from features import show_errors, show_status_codes, show_top_endpoints, show_total_lines
+from features import show_errors, show_status_codes, show_top_endpoints, show_total_lines, show_slow_requests
 from helpers import load_lines
 
 init(autoreset=True)
@@ -18,7 +18,8 @@ def show_menu() -> None:
     print("2. Show status codes")
     print("3. Show top endpoints")
     print("4. Show errors")
-    print("5. Exit")
+    print("5. Show slow requests")
+    print("6. Exit")
 
 
 # Calls menu
@@ -38,6 +39,8 @@ def main() -> None:
         elif option == "4":
             show_errors(lines)
         elif option == "5":
+            show_slow_requests(lines)
+        elif option == "6":
             print("Closing...")
             break
         else:

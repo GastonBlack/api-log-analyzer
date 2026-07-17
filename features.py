@@ -1,6 +1,8 @@
 from colorama import Fore, Style
 from helpers import get_valid_log_entries
 
+SLOW_REQUEST_THRESHOLD_MS = 100 # > 100ms = slow request.
+
 ## Features
 
 def show_total_lines(lines: list[str]) -> None:
@@ -66,14 +68,33 @@ def show_errors(lines: list[str]) -> None:
         method = parsed_line["method"]
         endpoint = parsed_line["endpoint"]
         status_code = parsed_line["status_code"]
-        duration = parsed_line["duration"]
+        duration_ms = parsed_line["duration_ms"]
 
         if status_code >= 400:
             any_error = True
-            print(f"{status_code} {method} {endpoint} {duration}")
+            print(f"{status_code} {method} {endpoint} {duration_ms}ms")
 
     if not any_error:
         print("No errors found.")
     else:
         print(f"{Fore.LIGHTCYAN_EX}Skipped lines: {invalid_count}")
     
+
+def show_slow_requests(lines: list[str]) -> None:
+    valid_entries, invalid_count = get_valid_log_entries(lines)
+    any_slow_request = False
+
+    print(f"Slow requests over {SLOW_REQUEST_THRESHOLD_MS}ms:")
+
+    for parsed_line in valid_entries:
+        if parsed_line["duration_ms"] > SLOW_REQUEST_THRESHOLD_MS:
+            any_slow_request = True
+            print(
+                f"{parsed_line["status_code"]} {parsed_line["method"]} "
+                f"{parsed_line["endpoint"]} lasted {Fore.LIGHTRED_EX}{parsed_line["duration_ms"]}{Fore.RESET} milliseconds."
+            )
+
+    if not any_slow_request:
+        print("No slow requests found")
+    
+    print(f"{Fore.LIGHTCYAN_EX}Skipped lines: {invalid_count}")
