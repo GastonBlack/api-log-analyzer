@@ -1,86 +1,12 @@
 from pathlib import Path
-from colorama import init, Fore, Style
-from helpers import parse_log_line
+from colorama import init
+
+from features import show_errors, show_status_codes, show_top_endpoints, show_total_lines
+from helpers import load_lines
 
 init(autoreset=True)
-
-
 LOG_PATH = Path("sample_logs/api.log")
 
-######
-####################
-def load_lines() -> list[str]:
-    content = LOG_PATH.read_text()
-    return content.splitlines()
-
-
-def show_total_lines(lines: list[str]) -> None:
-    print(f"Total log lines: {len(lines)}")
-
-
-def show_status_codes(lines: list[str]) -> None:
-    stats = {"2": 0, "3": 0, "4": 0, "5": 0}
-
-    for line in lines:
-        log_entry = parse_log_line(line)
-
-        # Status code.
-        code = str(log_entry["status_code"])[0]  # First char ["2xx", "3xx", "4xx", "5xx"].
-        if code in stats:
-            stats[code] += 1
-
-    print(f"{Fore.GREEN}Good requests (2xx): {stats['2']}")
-    print(f"{Fore.YELLOW}Redirections (3xx): {stats['3']}")
-    print(f"{Fore.RED}Client errors (4xx): {stats['4']}")
-    print(f"{Fore.RED}{Style.BRIGHT}Internal server errors (5xx): {stats['5']}")
-
-
-def show_top_endpoints(lines: list[str]) -> None:
-    endpoints = {}
-
-    for line in lines:
-        log_entry = parse_log_line(line)
-
-        method = log_entry["method"]
-        endpoint = log_entry["endpoint"]
-
-        key = f"{method} {endpoint}"
-
-        if key not in endpoints:
-            endpoints[key] = 0
-
-        endpoints[key] += 1
-
-    sorted_endpoints = sorted(
-        endpoints.items(),
-        key = lambda item: item[1],
-        reverse=True
-    )
-
-    print("Top 10 endpoints:")
-
-    for endpoint, count in sorted_endpoints[:10]:
-        print(f"{endpoint}: {count}")
-
-
-def show_errors(lines: list[str]) -> None:
-    print("Errors:")
-
-    for line in lines:
-        log_entry = parse_log_line(line)
-
-        method = log_entry["method"]
-        endpoint = log_entry["endpoint"]
-        status_code = log_entry["status_code"]
-        duration = log_entry["duration"]
-
-        if status_code >= 400:
-            print(f"{status_code} {method} {endpoint} {duration}")
-
-
-
-####################
-######
 
 # Menu
 def show_menu() -> None:
@@ -97,7 +23,7 @@ def show_menu() -> None:
 
 # Calls menu
 def main() -> None:
-    lines = load_lines()
+    lines = load_lines(LOG_PATH)
 
     while True:
         show_menu()
