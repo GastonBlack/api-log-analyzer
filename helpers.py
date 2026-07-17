@@ -34,3 +34,19 @@ def try_parse_log_line(line: str) -> dict | None:
         return None 
     
     return parsed_line
+
+
+def get_valid_log_entries(lines: list[str]) -> tuple[list[dict], int]:
+    valid_entries = []
+    invalid_count = 0
+
+    for line in lines:
+        parsed_line = try_parse_log_line(line)
+
+        if parsed_line is None:
+            invalid_count += 1
+            continue
+
+        valid_entries.append(parsed_line)
+    
+    return valid_entries, invalid_count
