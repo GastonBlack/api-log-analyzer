@@ -1,5 +1,6 @@
 from pathlib import Path
 from colorama import init, Fore, Style
+from helpers import parse_log_line
 
 init(autoreset=True)
 
@@ -21,10 +22,10 @@ def show_status_codes(lines: list[str]) -> None:
     stats = {"2": 0, "3": 0, "4": 0, "5": 0}
 
     for line in lines:
-        parts = line.split()
+        log_entry = parse_log_line(line)
 
         # Status code.
-        code = parts[4][0]  # First char ["2xx", "3xx", "4xx", "5xx"].
+        code = str(log_entry["status_code"])[0]  # First char ["2xx", "3xx", "4xx", "5xx"].
         if code in stats:
             stats[code] += 1
 
@@ -38,10 +39,11 @@ def show_top_endpoints(lines: list[str]) -> None:
     endpoints = {}
 
     for line in lines:
-        parts = line.split()
+        log_entry = parse_log_line(line)
 
-        method = parts[2]
-        endpoint = parts[3]
+        method = log_entry["method"]
+        endpoint = log_entry["endpoint"]
+
         key = f"{method} {endpoint}"
 
         if key not in endpoints:
@@ -65,12 +67,12 @@ def show_errors(lines: list[str]) -> None:
     print("Errors:")
 
     for line in lines:
-        parts = line.split()
+        log_entry = parse_log_line(line)
 
-        method = parts[2]
-        endpoint = parts[3]
-        status_code = int(parts[4])
-        duration = parts[5]
+        method = log_entry["method"]
+        endpoint = log_entry["endpoint"]
+        status_code = log_entry["status_code"]
+        duration = log_entry["duration"]
 
         if status_code >= 400:
             print(f"{status_code} {method} {endpoint} {duration}")
