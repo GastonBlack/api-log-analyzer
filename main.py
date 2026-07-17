@@ -32,6 +32,51 @@ def show_status_codes(lines: list[str]) -> None:
     print(f"{Fore.YELLOW}Redirections (3xx): {stats['3']}")
     print(f"{Fore.RED}Client errors (4xx): {stats['4']}")
     print(f"{Fore.RED}{Style.BRIGHT}Internal server errors (5xx): {stats['5']}")
+
+
+def show_top_endpoints(lines: list[str]) -> None:
+    endpoints = {}
+
+    for line in lines:
+        parts = line.split()
+
+        method = parts[2]
+        endpoint = parts[3]
+        key = f"{method} {endpoint}"
+
+        if key not in endpoints:
+            endpoints[key] = 0
+
+        endpoints[key] += 1
+
+    sorted_endpoints = sorted(
+        endpoints.items(),
+        key = lambda item: item[1],
+        reverse=True
+    )
+
+    print("Top 10 endpoints:")
+
+    for endpoint, count in sorted_endpoints[:10]:
+        print(f"{endpoint}: {count}")
+
+
+def show_errors(lines: list[str]) -> None:
+    print("Errors:")
+
+    for line in lines:
+        parts = line.split()
+
+        method = parts[2]
+        endpoint = parts[3]
+        status_code = int(parts[4])
+        duration = parts[5]
+
+        if status_code >= 400:
+            print(f"{status_code} {method} {endpoint} {duration}")
+
+
+
 ####################
 ######
 
@@ -43,7 +88,9 @@ def show_menu() -> None:
     print("########################\n")
     print("1. Show total log lines")
     print("2. Show status codes")
-    print("3. Exit")
+    print("3. Show top endpoints")
+    print("4. Show errors")
+    print("5. Exit")
 
 
 # Calls menu
@@ -59,6 +106,10 @@ def main() -> None:
         elif option == "2":
             show_status_codes(lines)
         elif option == "3":
+            show_top_endpoints(lines)
+        elif option == "4":
+            show_errors(lines)
+        elif option == "5":
             print("Closing...")
             break
         else:
